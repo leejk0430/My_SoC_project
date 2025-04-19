@@ -91,9 +91,9 @@ int main()
 
     delay_long();
 
-    uart_send_str("\r\nHello, ");
+    uart_send_str("\nHello, ");
     uart_send_str(input_buffer);
-    uart_send_str("!\r\n");
+    uart_send_str("!\n");
 
     while (1)
     {
