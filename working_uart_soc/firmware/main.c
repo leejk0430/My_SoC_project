@@ -78,7 +78,7 @@ int main()
 
     delay_long();
 
-    uart_send_str("Hello to Joong's world \n");
+    uart_send_str("Hello to Joong's world \r\n");
 
 
     
