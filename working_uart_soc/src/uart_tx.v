@@ -1,12 +1,3 @@
-//     # This module is designed after corescore_emitter_uart by Olof Kindgren which
-//     # is part of the corescore repository on github.
-//     #
-//     # https://github.com/olofk/corescore/blob/master/rtl/corescore_emitter_uart.v
-//     #
-//     # The original code is licensed under the Apache-2.0 license.
-//     # A copy of this license file is included in this repository in the LICENSES
-//     # directory.
-
 module uart_tx
   #(
     parameter clk_freq_hz = 30 * 1000000, // 100 MHz
@@ -29,20 +20,28 @@ module uart_tx
    
    reg [9:0] 	    data;
 
-   assign o_uart_tx = data[0] | !(|data);
+
+   reg o_ready_d;
+
+   assign o_uart_tx = (|data) ? data[0] : 1'b1;
 
    always @(posedge i_clk) begin
       
       if (i_rst) begin
             cnt <= {WIDTH{1'b0}};
             data <= 10'h0;
+            o_ready <= 1'b0;
+            o_ready_d <= 1'b0;
 
       end
 
       else begin
+
+            o_ready_d <= o_ready;
+
             if (cnt[WIDTH] & !(|data))
             o_ready <= 1'b1;
-            else if (i_valid & o_ready)
+            else if (i_valid & o_ready_d)
             o_ready <= 1'b0;
       
             if (o_ready | cnt[WIDTH])
@@ -52,7 +51,7 @@ module uart_tx
             
             if (cnt[WIDTH])
             data <= {1'b0, data[9:1]};
-            else if (i_valid & o_ready)
+            else if (i_valid & o_ready_d)
             data <= {1'b1, i_data, 1'b0};
       end
    end
